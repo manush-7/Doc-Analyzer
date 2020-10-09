@@ -1,0 +1,159 @@
+<!doctype html>
+<head>
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.357.0.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="js/amazon-cognito-identity.min.js"></script>  
+<script src="js/config.js"></script>
+
+<style>
+    	.webbar{
+			background-color: #070097;
+			height: 60px;
+			border-bottom: 10px solid grey;
+			
+		}
+</style>
+
+<script type="text/javascript">
+
+
+
+
+//Bucket Configurations
+
+ var bucketName = "zeeshantest";
+ var bucketRegion = "ap-south-1";
+ var IdentityPoolId = "ap-south-1:e4ade473-da54-4967-9e7c-8cb77e645fd8";
+
+ AWS.config.update({
+                region: bucketRegion,
+                credentials: new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: IdentityPoolId
+                })
+            });
+
+            var s3 = new AWS.S3({
+                apiVersion: '2006-03-01',
+                params: {Bucket: bucketName}
+        });
+</script>
+</head>
+<body>
+
+    <div class=" container-fluid webbar">
+		<div class="row">
+			<div class="col-md-6" style="color: orange; font-size:25px; text-align:start;">
+				<div style="padding-left: 30px;font-weight: bolder;"> Welcome!</div>
+			</div>
+			<div class="col-md-6" style="color: orange; font-size:25px; text-align:end;">
+				<label id="email_value" style="padding-right:20px;"></label>
+				
+				<button type="button" onclick="signOut()" class="btn btn-danger">Logout</button>
+			</div>
+		</div>
+	</div>
+
+
+    <!-- A functional html code-->
+    <!-- <div>
+        <input type="file" id="fileUpload">
+    </div>
+
+    <div>
+    <button onclick="s3upload()">Submit</button>
+    </div>
+
+    <progress max=”100” value=”0”></progress> -->
+
+
+    <div class="container-fluid justify-content-center d-flex" style="height: 300px; background-color: greenyellow; border-radius: 0px 0px 900px 900px;">
+        <div class="row justify-content-center align-content-center">
+            <div class="col-md-12 align-content-center">
+                <input type="file" id="fileUpload">
+                <br>
+                <button type="button" class="btn btn-primary" onclick="signOut()" style="margin-top: 50px;">Upload File</button>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <script type="text/javascript">
+
+            var data = { 
+                    UserPoolId : _config.cognito.userPoolId,
+                    ClientId : _config.cognito.clientId
+                };
+                var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+                var cognitoUser = userPool.getCurrentUser();
+                
+                window.onload = function(){
+                if (cognitoUser != null) {
+                    cognitoUser.getSession(function(err, session) {
+                        if (err) {
+                            alert(err);
+                            return;
+                        }
+                        console.log('session validity: ' + session.isValid());
+                        //Set the profile info
+                        cognitoUser.getUserAttributes(function(err, result) {
+                            if (err) {
+                                console.log(err);
+                                return;
+                            }
+                            console.log(result);
+                            console.log(result[3].getValue());
+                            console.log(result[2].getValue());
+                            console.log(result[1].getValue());
+                            document.getElementById("email_value").innerHTML = result[3].getValue();	
+                        });			
+                        
+                    });
+                }
+            }
+
+      function s3upload() {  
+            console.log(bucketRegion)
+            console.log(bucketName)
+            
+                var files = document.getElementById('fileUpload').files;
+                if (files) 
+                {
+                    var file = files[0];
+                    var fileName = file.name;
+                    var filePath = 'my-first-bucket-path/' + fileName;
+                    var fileUrl = 'https://' + bucketRegion + '.amazonaws.com/my-first-bucket/' +  filePath;
+            
+                    s3.upload({
+                                    Key: filePath,
+                                    Body: file,
+                                    ACL: 'public-read'
+                                }, function(err, data) {
+                                    if(err) {
+                                        reject('error');
+                                    }
+                                    
+                                    alert('Successfully Uploaded!');
+                                }).on('httpUploadProgress', function (progress) {
+                                    var uploaded = parseInt((progress.loaded * 100) / progress.total);
+                                    $("progress").attr('value', uploaded);
+                                });
+                }
+      };
+
+
+      function signOut(){
+	    if (cognitoUser != null) {
+          cognitoUser.signOut();	
+          window.location.href = "register.html";	   
+        }
+    }
+    
+    </script>
+</body>
+</html>

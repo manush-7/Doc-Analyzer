@@ -1,0 +1,7 @@
+.sidebox{
+    margin-right: 100px; 
+     margin-top: 100px; 
+     border-radius: 10%;
+    background-color: burlywood;
+    filter: drop-shadow(0 0 0.75rem black);
+}

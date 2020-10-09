@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/register_page.css">
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<!-- Javascript SDKs-->
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script> 
+	<script src="js/amazon-cognito-auth.min.js"></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script> 
+	<script src="js/amazon-cognito-identity.min.js"></script>   
+	<script src="js/config.js"></script>
+
+  </head>
+  <body style="background-image:url(assets/aws-wallpaper.jpg); background-size: cover;">
+    <!-- <form>
+      <h1>Please sign in</h1>
+
+      <input type="text" id="inputUsername"  placeholder="Email address" name="username" required autofocus>
+      <input type="password" id="inputPassword"  placeholder="Password" name="password" required>    
+      <button type="button" onclick="signInButton()">Sign in</button>
+
+    </form> -->
+
+
+
+
+    <div class="container-fluid">
+      <div class="row justify-content-end align-items-center" style="min-height: 800px;">
+        <div class="col-md-4 sidebox" style="background:#e1e3ea; padding: 50px;">
+          <p class="display-3 font-weight-bold" style="color: black;">
+            Welcome Back!
+          </p>
+
+          <form>
+            <h1>Please sign in</h1>
+            <br>
+            <input type="text" class="form-control" id="inputUsername"  placeholder="Email address" name="username" required autofocus>
+            <br>
+            <input type="password" class="form-control" id="inputPassword"  placeholder="Password" name="password" required>    
+            <br>
+            <button type="button" class="btn btn-lg btn-primary btn-block" style="background-color: orange;" onclick="signInButton()">Sign in</button>
+            <br>
+            <p style="font-size: 20px; font-weight: bold;">Dont have an Account ?</p>
+            <br>
+            <a href="register.html" style="font-size:18px;">Register Here</a>
+          </form>
+    
+         
+          
+          <br>
+        </div>
+      </div>
+    </div>
+
+
+<script>
+
+  function signInButton() {
+    
+	var authenticationData = {
+        Username : document.getElementById("inputUsername").value,
+        Password : document.getElementById("inputPassword").value,
+    };
+	
+    var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+    
+	var poolData = {
+        UserPoolId : _config.cognito.userPoolId, // Your user pool id here
+        ClientId : _config.cognito.clientId, // Your client id here
+    };
+	
+    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+	
+    var userData = {
+        Username : document.getElementById("inputUsername").value,
+        Pool : userPool,
+    };
+	
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    
+	cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: function (result) {
+			var accessToken = result.getAccessToken().getJwtToken();
+			console.log(accessToken);	
+      window.location.href = "profile.html"
+        },
+
+        onFailure: function(err) {
+            alert(err.message || JSON.stringify(err));
+        },
+    });
+  }
+</script>
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.7/js/tether.min.js" ></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"> </script>
+</html>
+
+
+
+
+
+
+
+
