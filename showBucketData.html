@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	 <!--Cognito JavaScript-->
+	 <link rel="stylesheet" href="css/card-style.css">
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<script src="js/amazon-cognito-identity.min.js"></script>  
+	<script src="js/config.js"></script>
+
+	<style>
+		.webbar{
+			background-color: #070097;
+			height: 60px;
+			border-bottom: 10px solid grey;
+			
+		}
+		
+		body{
+			background-image: url("imgs/Bottom_design.png");
+			background-size:115%;
+			background-repeat: no-repeat;
+		}
+		.outer-card{
+			background-color: whitesmoke;
+			border-radius: 50px;
+
+
+
+		}
+		
+	</style>
+  </head>
+
+  <body>
+
+	<div class=" container-fluid webbar">
+		<div class="row">
+			<div class="col-md-6" style="color: orange; font-size:25px; text-align:start;">
+				<div style="padding-left: 30px;font-weight: bolder;"> Welcome!</div>
+			</div>
+			<div class="col-md-6" style="color: orange; font-size:25px; text-align:end;">
+				<label id="email_value" style="padding-right:20px;"></label>
+				
+				<button type="button" onclick="signOut()" class="btn btn-danger">Logout</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+	//Add the inner HTML Contents (Retrived from S3)
+	</div>
+
+			
+
+	
+
+	<script type="text/javascript" src="js/vanilla-tilt.js"></script>
+					
+	<script type="text/javascript">
+		VanillaTilt.init(document.querySelectorAll(".box"), {
+		max: 20,
+		speed: 300
+	});
+						  
+	</script>
+
+
+
+
+    <script>
+	var data = { 
+		UserPoolId : _config.cognito.userPoolId,
+        ClientId : _config.cognito.clientId
+    };
+    var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+    var cognitoUser = userPool.getCurrentUser();
+	
+	window.onload = function(){
+    if (cognitoUser != null) {
+        cognitoUser.getSession(function(err, session) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            console.log('session validity: ' + session.isValid());
+			//Set the profile info
+			cognitoUser.getUserAttributes(function(err, result) {
+				if (err) {
+					console.log(err);
+					return;
+				}
+				console.log(result);
+				document.getElementById("email_value").innerHTML = result[3].getValue();	
+			});			
+			
+        });
+    }
+}
+	
+
+function signOut(){
+	    if (cognitoUser != null) {
+		  cognitoUser.signOut();
+		  window.location.href = "register.html";	  
+		}
+		
+	}
+	</script>
+	
+  </body>
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.7/js/tether.min.js" ></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"> </script>
+</html>
